@@ -72,12 +72,52 @@ def proverka(dengi,minStavka):
             stavka = input()
     return stavka
 
+def sravnenie(game,igrok):
+    if game == igrok:
+        sovpadenie = True
+    else:
+        sovpadenie = False
+    return sovpadenie
+
+def intro2():
+    print('''  После сделанной вами ставки 
+    женщина начала двигать напёрстки с невиданной скоростью
+
+    После придвинула напёртки ближе к Вам
+    Вы должны выбрать один из напёрстков,
+    под которым по вашему мнению находится шарик''')
+
+def otvet():
+    print('Укажите номер выбранного вами напёрстка:')
+    nap = input()
+    while True:
+        if nap.isdigit():
+            if (nap in '123') and (len(nap)==1):
+                nap = int(nap)
+                break
+            else:
+                print('Нужно ввести только 1,2 или 3')
+                nap = input()
+        else:
+            print('Нужно ввести только цифру')
+            nap = input()
+    return nap
 
 
 #***
 #ОСНОВНОЕ ТЕЛО ПРОГРАММЫ
 #***
-
 many,minBig = nastroyki()
-
 intro()
+stavkaIgroka = proverka(many,minBig)
+intro2()
+napGame = random.randint(1,3)
+napIgrok = otvet()
+if sravnenie(napGame,napIgrok):
+    print('Поздраляем!Вы выйграли!')
+    many = many + stavkaIgroka
+else:
+    print('Очень жаль!Вы проиграли!')
+    many = many - stavkaIgroka
+
+print(many)
