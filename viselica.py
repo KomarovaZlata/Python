@@ -46,10 +46,53 @@ def GenVis():
     return HANGMAN_PICT
 
 def GenSlov():
-    words = 'акула аист белка бобр бегемот верблюд волк выдра голубь гусь дрозд дятел дикобраз еж енот жираф журавль заяц зебра зубр индюк иволга кабан косатка кот коршун кролик лама лев лиса ленивец медведь мышь носорог норка орел обезяна олень осёл петух паук панда пингвин рысь рак синица слон сова суслик тигр тюлень уж улитка филин хорек хомяк цапля чайка черепаха'.split()
+    words = {'животные':'акула аист белка бобр бегемот верблюд волк выдра голубь гусь дрозд дятел дикобраз еж енот жираф журавль заяц зебра зубр индюк иволга кабан косатка кот коршун кролик лама лев лиса ленивец медведь мышь носорог норка орел обезяна олень осёл петух паук панда пингвин рысь рак синица слон сова суслик тигр тюлень уж улитка филин хорек хомяк цапля чайка черепаха'.split(),
+    'цвета':'красный оранжевый желтый зеленый голубой синий фиолетовый розовый черный белый коричневый'.split(),
+    'фрукты':'яблоко груша апельсин персик слива ананас дыня киви'.split()}
+
+
+
     return words
 
-def VyborSlova (spisok):
+def VyborSlova (spisok,uS):
+    if uS == 'Л':
+        for i in range(len(list(spisok.keys()))):
+            print('Для выбора категории'+list(spisok.keys())[i]+' введите '+str(i))
+
+        while True:
+            katSlov = input()
+            if not katSlov.isdigit():
+                print('Вводить можно только цифры.')
+            else:
+                katSlov = int(katSlov)
+                if katSlov > len(list(spisok.keys())):
+                    print('Вы ввели неверное число.')
+                else:
+                    break
+
+        kategorya = list(spisok.keys())[katSlov]
+    else:
+        kategorya = random.choice(list(spisok.keys()))
+
+    indexSlova = random.randint(0,len(spisok[kategorya])-1)
+
+    return [spisok[kategorya][indexSlova],kategorya]
+
+def vyborUS():
+    while True:
+        print('Выберите уровень сложности')
+        print('Введите "Л" для лёгкого уровня')
+        print('Введите "С" для среднего уровня')
+        print('Введите "Т" для трудного уровня')
+        uroven = input()
+        uroven = uroven.upper()
+        if len(uroven) != 1:
+            print('Надо вводить только один символ.')
+        elif uroven not in 'ЛСТ':
+            print('Вы ввели неправильную букву.')
+        else:
+            return uroven
+
     game = random.randint(0,len(spisok)-1)
     slovo = spisok[game]
     return slovo
@@ -68,7 +111,9 @@ def proverka(strbukv):
         else:
             return buk  
 
-def displayboard(NasVis,errorBuk,yesBuk,SicretSl):
+def displayboard(NasVis,errorBuk,yesBuk,SicretSl,urS,kS):
+    if urS in 'ЛС':
+        print(kS)
     print(NasVis[len(errorBuk)])
     print()
     print('Ошибочные буквы:' +errorBuk)
@@ -114,14 +159,21 @@ def PlayAgain():
 #***
 vis = GenVis()
 wordsS = GenSlov()
-SicretSlovo = VyborSlova(wordsS)
-print(SicretSlovo)
+
 strokaErrorB = ''
 strokaYesB = ''
 GameOver = False
 
+urovenSl = vyborUS()
+SicretSlovo,katSlov = VyborSlova(wordsS,urovenSl)
+
+
+
+
+
+
 while True:
-    displayboard(vis,strokaErrorB,strokaYesB,SicretSlovo)
+    displayboard(vis,strokaErrorB,strokaYesB,SicretSlovo,urovenSl,katSlov)
     vvedenyaB = proverka(strokaErrorB + strokaYesB)
 
     if vvedenyaB in SicretSlovo:
@@ -139,7 +191,7 @@ while True:
         strokaErrorB = strokaErrorB + vvedenyaB
 
         if len(strokaErrorB) ==len(vis) -1:
-            displayboard(vis,strokaYesB,strokaErrorB,SicretSlovo)
+            displayboard(vis,strokaErrorB,strokaYesB,SicretSlovo,urovenSl,katSlov)
             print('''             У Вас закончились все попытки!
             Названо ошибочных букв: "'''+str(len(strokaErrorB))+'''"       
             Угадано букв:    "'''+str(len(strokaYesB))+'''"      
@@ -148,7 +200,8 @@ while True:
 
     if GameOver:
         if PlayAgain():
-            SicretSlovo = VyborSlova(wordsS)
+            urovenSl = vyborUS()
+            SicretSlovo,katSlov = VyborSlova(wordsS,urovenSl)
 
             strokaErrorB = ''
             strokaYesB = ''
